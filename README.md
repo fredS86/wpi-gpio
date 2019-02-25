@@ -57,6 +57,57 @@ gpio.write(4, 1).then(function() {
 ```
 
 ```javascript
+gpio.rising(4).then(function() {
+  // wait for a rising edge on GPIO pin 4
+});
+```
+
+```javascript
+gpio.falling(4).then(function() {
+  // wait for a falling edge on GPIO pin 4
+});
+```
+
+```javascript
+gpio.edge(4).then(function() {
+  // wait for a rising or falling edge on GPIO pin 4
+});
+```
+
+```javascript
+const callback(n) {
+  // do something for the nth times 
+}
+gpio.irising(4, callback).then(function(times) {
+  // executes callback each time a rising edge is detected on GPIO pin 4.
+  // Break the loop if callback returns a falsy value.
+  // `times` is the number of times the callback has been executed
+});
+```
+
+```javascript
+const callback(n) {
+  // do something for the nth times 
+}
+gpio.ifalling(4, callback).then(function(times) {
+  // executes callback each time a falling edge is detected on GPIO pin 4.
+  // Break the loop if callback returns a falsy value.
+  // `times` is the number of times the callback has been executed
+});
+```
+
+```javascript
+const callback(n) {
+  // do something for the nth times 
+}
+gpio.iedge(4, callback).then(function(times) {
+  // executes callback each time a rising or faling edge is detected on GPIO pin 4.
+  // Break the loop if callback returns a falsy value.
+  // `times` is the number of times the callback has been executed
+});
+```
+
+```javascript
 gpio.sequence(5, [0, 1, 0, 1]).then(function() {
   // GPIO pin 5 has values written in series, with a 100ms delay between values
 });

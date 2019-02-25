@@ -159,4 +159,93 @@
     });
   });
 
+  tap.test('should detect a rising edge', t => {
+    return gpio.rising(3).then(() => {
+      t.same(cmds, ['gpio wfi 3 rising'], 'rising method executes correct command');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.rising(3).then(() => {
+        t.same(cmds, ['gpio -g wfi 3 rising'], 'rising method with BCM_GPIO executes correct command');
+      });
+    });
+  });
+
+  tap.test('should detect a falling edge', t => {
+    return gpio.falling(3).then(() => {
+      t.same(cmds, ['gpio wfi 3 falling'], 'falling method executes correct command');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.falling(3).then(() => {
+        t.same(cmds, ['gpio -g wfi 3 falling'], 'falling method with BCM_GPIO executes correct command');
+      });
+    });
+  });
+
+  tap.test('should detect a rising or falling edge', t => {
+    return gpio.edge(3).then(() => {
+      t.same(cmds, ['gpio wfi 3 both'], 'edge method executes correct command');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.edge(3).then(() => {
+        t.same(cmds, ['gpio -g wfi 3 both'], 'edge method with BCM_GPIO executes correct command');
+      });
+    });
+  });
+
+  
+  const callback = (t, maxTimes, edge, method) => {
+    let expected = [];
+    let i = 0;
+    return (times) => { 
+      expected.push(gpio.BCM_GPIO ? 'gpio -g wfi 3 ' + edge : 'gpio wfi 3 ' + edge);
+      i++;
+      if (times < maxTimes) {
+        return true;
+      } else {
+        t.same(cmds, expected, method + ' method executes correct command, ' + times + ' times' + (gpio.BCM_GPIO ? ' with BCM_GPIO' : ''));
+        t.equals(times, i, method + ' method uses callback ' + times + ' times' + (gpio.BCM_GPIO ? ' with BCM_GPIO' : ''));
+        return false;
+      } 
+    };
+  }
+
+  tap.test('should detect 2 rising edges', t => {
+    return gpio.irising(3, callback(t, 2, 'rising', 'irising')).then((val) => {
+      t.equals(val, 2, 'irising method stops after 2 times');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.irising(3, callback(t, 2, 'rising', 'irising')).then((val) => {
+        t.equals(val, 2, 'irising method stops after 2 times with BCM_GPIO');
+      });
+    });
+  });
+
+  tap.test('should detect 2 falling edges', t => {
+    return gpio.ifalling(3, callback(t, 2, 'falling', 'ifalling')).then((val) => {
+      t.equals(val, 2, 'ifalling method stops after 2 times');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.ifalling(3, callback(t, 2, 'falling', 'ifalling')).then((val) => {
+        t.equals(val, 2, 'ifalling method stops after 2 times with BCM_GPIO');
+      });
+    });
+  });
+
+  tap.test('should detect 2 edges', t => {
+    return gpio.iedge(3, callback(t, 2, 'both', 'iedge')).then((val) => {
+      t.equals(val, 2, 'iedge method stops after 2 times');
+    }).then(() => {
+      cmds = [];
+      gpio.BCM_GPIO = true;
+      return gpio.iedge(3, callback(t, 2, 'both', 'iedge')).then((val) => {
+        t.equals(val, 2, 'iedge method stops after 2 times with BCM_GPIO');
+      });
+    });
+  });
+
 })();

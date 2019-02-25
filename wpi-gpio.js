@@ -115,6 +115,85 @@
   };
 
   /**
+   * Non-busy wait for a rising edge of an input pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.rising = (pin) => {
+    return gpioExec('wfi', pin, ['rising']);
+  };
+
+  /**
+   * Non-busy wait for a falling edge of an input pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.falling = (pin) => {
+    return gpioExec('wfi', pin, ['falling']);
+  };
+
+  /**
+   * Non-busy wait for a rising or falling edge of an input pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.edge = (pin) => {
+    return gpioExec('wfi', pin, ['both']);
+  };
+
+  /**
+   * Infinite non-busy wait for a rising edge 
+   * of an input pin. The loop breaks when the
+   * callback returns a falsy value;
+   *
+   * @param {Number|String} pin
+   * @param {Function} callback - function called each time a rising edge is detected
+   * @return {Promise} -> Callback count
+   */
+  gpio.irising = (pin, callback, times) => {
+    times = times || 1;
+    return gpio.rising(pin).then((val) => {
+      return callback(times, val) ? gpio.irising(pin, callback, ++times) : Promise.resolve(times); 
+    });
+  };
+
+  /**
+   * Infinite non-busy wait for a falling edge 
+   * of an input pin. The loop breaks when the
+   * callback returns a falsy value;
+   *
+   * @param {Number|String} pin
+   * @param {Function} callback - function called each time a falling edge is detected
+   * @return {Promise} -> Callback count
+   */
+  gpio.ifalling = (pin, callback, times) => {
+    times = times || 1;
+    return gpio.falling(pin).then((val) => {
+      return callback(times, val) ? gpio.ifalling(pin, callback, ++times) : Promise.resolve(times); 
+    });
+  };
+
+  /**
+   * Infinite non-busy wait for a rising or
+   * falling edge of an input pin. The loop
+   * breaks when the callback returns a 
+   * falsy value;
+   *
+   * @param {Number|String} pin
+   * @param {Function} callback - function called each time a rising or falling edge is detected
+   * @return {Promise} -> Callback count
+   */
+  gpio.iedge = (pin, callback, times) => {
+    times = times || 1;
+    return gpio.edge(pin).then((val) => {
+      return callback(times, val) ? gpio.iedge(pin, callback, ++times) : Promise.resolve(times); 
+    });
+  };
+
+  /**
    * Set a sequence of values to an output pin
    *
    * @param {Number|String} pin
