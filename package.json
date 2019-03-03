@@ -19,7 +19,7 @@
     "url": "git://github.com/gavinhungry/wpi-gpio.git"
   },
 
-  "main": "wpi-gpio.js",
+  "main": "index.js",
   "scripts": {
     "test": "tap test -R spec"
   },
