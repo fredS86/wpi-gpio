@@ -4,7 +4,6 @@
   "author": "Gavin Lloyd <gavinhungry@gmail.com>",
   "description": "Wrapper around the WiringPi gpio command-line utility",
   "license": "MIT",
-
   "keywords": [
     "gpio",
     "pi",
@@ -12,21 +11,21 @@
     "rpi",
     "wiringpi"
   ],
-
   "homepage": "https://github.com/gavinhungry/wpi-gpio",
   "repository": {
     "type": "git",
     "url": "git://github.com/gavinhungry/wpi-gpio.git"
   },
-
   "main": "index.js",
   "scripts": {
     "test": "tap test -R spec"
   },
   "private": true,
-
   "devDependencies": {
     "proxyquire": "1.8.x",
     "tap": "10.7.x"
+  },
+  "dependencies": {
+    "keypress": "^0.2.1"
   }
 }

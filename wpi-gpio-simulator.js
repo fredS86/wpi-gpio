@@ -21,33 +21,41 @@ getPin = (pin) => {
   return _gpio[pin];
 }
 
-updateReadValue = (pin) => {
-  const p = getPin(pin);
-  const oldValue = p.readValue;
-  const newValue = getRandomValue();
-  getPin(pin).readValue = newValue;
-  if (oldValue !== newValue) {
-    p.edge.forEach(cb => {
+updateReadValue = (p) => {
+  p.readValue = 1 - p.readValue;
+  p.edge.forEach(cb => {
+    cb.apply();
+  });
+  p.edge = [];
+  if (p.readValue === HIGH) {
+    p.rising.forEach(cb => {
       cb.apply();
-    });
-    p.edge = [];
-    if (oldValue === LOW) {
-      p.rising.forEach(cb => {
-        cb.apply();
-      })
-      p.rising = [];
-    } else {
-      p.falling.forEach(cb => {
-        cb.apply();
-      })
-      p.falling = [];
-    }
+    })
+    p.rising = [];
+  } else {
+    p.falling.forEach(cb => {
+      cb.apply();
+    })
+    p.falling = [];
   }
 };
   
-getRandomValue = () => {
-  return Math.floor(Math.random() * 10) % 2;
-}
+var keypress = require('keypress');
+
+// make `process.stdin` begin emitting "keypress" events
+keypress(process.stdin);
+
+// listen for the "keypress" event
+process.stdin.on('keypress', function (ch, key) {
+  console.log('got "keypress"', key);
+  _gpio.filter(p => {return p && p.mode === INPUT;}).forEach((p) => {console.log("pin", p);updateReadValue(p)});
+  if (key && key.ctrl && key.name == 'c') {
+    process.exit();
+  }
+});
+
+process.stdin.setRawMode(true);
+process.stdin.resume();
 
 /**
  * Set a pin mode
@@ -59,12 +67,6 @@ getRandomValue = () => {
 mode = (pin, mode) => {
   let p = getPin(pin);
   p.mode = mode;
-  if (mode === INPUT) {
-    p.interval = setInterval(() => updateReadValue(pin), 1000)
-  } else {
-      p.interval && clearInterval(p.interval);
-      p.interval = undefined;
-  }
   return Promise.resolve(0);
 };
 
