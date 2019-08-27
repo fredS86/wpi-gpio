@@ -67,7 +67,7 @@ process.stdin.resume();
 mode = (pin, mode) => {
   let p = getPin(pin);
   p.mode = mode;
-  return Promise.resolve(0);
+  return Promise.resolve();
 };
 
 /**
@@ -105,7 +105,7 @@ gpio.write = (pin, value) => {
     return Promise.resolve();
   }
   getPin(pin).value = value ? HIGH : LOW;
-  return Promise.resolve(0);
+  return Promise.resolve();
 };
 
 /**
@@ -130,7 +130,7 @@ gpio.read = (pin) => {
  * @return {Promise}
  */
 gpio.pullUp = (pin) => {
-  return Promise.resolve(0);
+  return Promise.resolve();
 };
 
 /**
@@ -140,7 +140,7 @@ gpio.pullUp = (pin) => {
  * @return {Promise}
  */
 gpio.pullDown = (pin) => {
-  return Promise.resolve(0);
+  return Promise.resolve();
 };
 
 /**
@@ -150,7 +150,7 @@ gpio.pullDown = (pin) => {
  * @return {Promise}
  */
 gpio.triState = (pin) => {
-  return Promise.resolve(0);
+  return Promise.resolve();
 };
 
 /**
